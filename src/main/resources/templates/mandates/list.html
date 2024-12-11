@@ -83,7 +83,9 @@
 						Usuń
 					</button>
 			
-					<a th:href="@{/edit/{id}(id=${mandate.id})}" class="btn btn-success">Edycja</a>
+					<a th:href="@{/edit/{id}(id=${mandate.id})}"
+					   th:classappend="${mandate.paid} ? 'disabled' : ''"
+					   class="buttonEdit btn btn-success">Edycja</a>
 				</div>
 			</td>
 
@@ -106,6 +108,7 @@
 					target.classList.add("disabled","btn-success");
 					target.classList.remove("btn-danger");
 					target.closest("tr").querySelector(".buttonDelete").classList.add("disabled");
+					target.closest("tr").querySelector(".buttonEdit").classList.add("disabled");
 				}
 			} catch { showAlert("Błąd sieci. Spróbuj ponownie.", "danger"); }
 		}
