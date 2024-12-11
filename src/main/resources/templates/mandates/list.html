@@ -15,7 +15,7 @@
 
 
 
-	<table id="mandatesTable" class="table table-striped table-bordered">
+	<table id="mandatesTable" class="table table-striped table-bordered w-100">
 		<thead>
 		<tr>
 			<th>Sygnatura</th>
@@ -141,15 +141,16 @@
 		columnDefs: [{ orderable: false, targets: [12] }],
 		classes: {
 			sWrapper: "table-responsive",
-			sFilter: "float-end mb-3",
-			sLength: "float-start mb-3",
+			sFilter: "float-end m-4 mx-2 w-50",
+			sLength: "float-start m-4 mx-2",
 			sProcessing: "alert alert-info",
 			sInfo: "d-none",
 			sPageButton: "btn btn-primary btn-sm mx-1" 
 		},
 		drawCallback: function () {
 			$('select[name="mandatesTable_length"]').addClass('form-select form-select-sm');
-			$('#mandatesTable_filter input').addClass('form-control form-control-sm');
+			$('#mandatesTable_filter>label').addClass('w-100');
+			$('#mandatesTable_filter input').addClass('form-control form-control-sm w-100 d-block');
 			$('#mandatesTable_paginate').addClass('text-center mt-3 ms-auto');
 		}
 	});
