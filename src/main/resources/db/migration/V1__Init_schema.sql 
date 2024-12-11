@@ -1,0 +1,35 @@
+-- Tworzenie tabeli `companies`
+CREATE TABLE companies (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    nip VARCHAR(10) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Tworzenie tabeli `employees`
+CREATE TABLE employees (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(255) NOT NULL,
+    company_id BIGINT,
+    active BOOLEAN,
+    FOREIGN KEY (company_id) REFERENCES companies (id)
+);
+
+-- Tworzenie tabeli `mandates`
+CREATE TABLE mandates (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    signature VARCHAR(255) NOT NULL UNIQUE,
+    violation_date DATE NOT NULL,
+    reason VARCHAR(50) NOT NULL,
+    custom_reason VARCHAR(200),
+    amount DECIMAL(10, 2) NOT NULL,
+    currency VARCHAR(10) NOT NULL,
+    administrative_fee DECIMAL(10, 2) NOT NULL DEFAULT 100.00,
+    administrative_fee_currency VARCHAR(10) NOT NULL DEFAULT 'PLN',
+    attachment BLOB,
+    payment_deadline DATE NOT NULL,
+    paid BOOLEAN NOT NULL DEFAULT FALSE,
+    employee_id BIGINT NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES employees (id)
+);

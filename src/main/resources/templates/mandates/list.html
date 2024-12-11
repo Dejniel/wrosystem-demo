@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout}">
+<head>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+<main layout:fragment="content">
+
+	<h2>Lista mandatów</h2>
+
+
+
+	<table id="mandatesTable" class="table table-striped table-bordered">
+		<thead>
+		<tr>
+			<th>Sygnatura</th>
+			<th>Imię</th>
+			<th>Nazwisko</th>
+			<th>Firma</th>
+			<th>Telefon</th>
+			<th>Wykroczenie</th>
+			<th>Data wykroczenia</th>
+			<th>Kwota mandatu</th>
+			<th>Opłata administracyjna</th>
+			<th>Termin zapłaty</th>
+			<th>Załącznik</th>
+			<th>Opcje</th>
+		</tr>
+		<tr>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th><input type="text" class="form-control form-control-sm" placeholder="Filtruj" /></th>
+			<th></th>
+			<th></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="mandate : ${mandates}">
+			<td th:text="${mandate.signature}">---</td>
+			<td th:text="${mandate.employee.firstName}">---</td>
+			<td th:text="${mandate.employee.lastName}">---</td>
+			<td th:text="${mandate.employee.company != null ? mandate.employee.company.name : 'Pracownik biurowy'}">---</td>
+			<td th:text="${mandate.employee.phoneNumber}">---</td>
+			<td th:text="${mandate.reason.name() == 'OTHER' ? mandate.customReason : mandate.reason.getName()}">---</td>
+			<td th:text="${mandate.violationDate}">---</td>
+			<td th:text="${mandate.amount} + ' ' + ${mandate.currency}">---</td>
+			<td th:text="${mandate.paymentDeadline}">---</td>
+			<td th:text="${mandate.administrativeFee} + ' ' + ${mandate.administrativeFeeCurrency}">---</td>
+			<td>
+				<a th:if="${mandate.attachment != null}" 
+				   th:href="@{/attachment(id=${mandate.id})}" 
+				   class="btn btn-secondary attachment-link" 
+				   download>
+					<i class="fas fa-paperclip"></i>
+				</a>
+			</td>
+			<td class="align-middle">
+				<div class="d-flex gap-2 align-items-center h-100">
+					<button th:data-id="${mandate.id}"
+						th:classappend="${mandate.paid} ? 'disabled' : ''"
+						class="buttonPay btn btn-warning"
+						th:text="${mandate.paid} ? 'Opłacono' : 'Opłacił'">
+					</button>
+			
+					<button th:data-id="${mandate.id}"
+						th:classappend="${mandate.paid} ? 'disabled' : ''"
+						class="buttonDelete btn btn-danger">
+						Usuń
+					</button>
+			
+					<a th:href="@{/edit/{id}(id=${mandate.id})}" class="btn btn-success">Edycja</a>
+				</div>
+			</td>
+
+		</tr>
+		</tbody>
+	</table>
+	<script>
+	// Obługa przycisku "Opłać"
+	document.querySelectorAll(".buttonPay").forEach(btn =>
+		btn.onclick = async ({ target }) => {
+			try {
+				const res = await fetch('/api/set/mandate/mark', {
+					method: 'POST',
+					body: new URLSearchParams({ id: target.dataset.id })
+				});
+				const { message, type } = await res.json();
+				showAlert(message, type);
+				if (res.ok) {
+					target.classList.add("disabled");
+					target.closest("tr").querySelector(".buttonDelete").classList.add("disabled");
+				}
+			} catch { showAlert("Błąd sieci. Spróbuj ponownie.", "danger"); }
+		}
+	);
+ 	// Obsługa przycisku "Usuń"
+	document.querySelectorAll(".buttonDelete").forEach(btn =>
+		btn.onclick = async ({ target }) => {
+			try {
+				const res = await fetch('/api/delete/mandate', {
+					method: 'DELETE',
+					body: new URLSearchParams({ id: target.dataset.id })
+				});
+				const { message, type } = await res.json();
+				showAlert(message, type);
+				if (res.ok) table.row(target.closest("tr")).remove().draw();
+			} catch { showAlert("Błąd sieci. Spróbuj ponownie.", "danger"); }
+		}
+	);
+ 	// Sortowanie tabeli
+	const table = $('#mandatesTable').DataTable({
+		language: { 
+			url: "https://cdn.datatables.net/plug-ins/1.13.5/i18n/pl.json" ,
+			search: "", 
+			lengthMenu: "_MENU_",
+			paginate: {
+				  previous: '<i class="fas fa-chevron-left"></i>',
+				  next: '<i class="fas fa-chevron-right"></i>'
+			}},
+		order: new Array( new Array(6, "desc") ),
+		columnDefs: [{ orderable: false, targets: [10, 11] }],
+		classes: {
+			sFilter: ".dataTables_filter float-end mb-3",
+			sLength: "float-start mb-3",
+			sProcessing: "alert alert-info",
+			sInfo: "d-none",
+			sPageButton: "btn btn-primary btn-sm mx-1" 
+		},
+		drawCallback: function () {
+			$('select[name="mandatesTable_length"]').addClass('form-select form-select-sm');
+			$('.dataTables_filter input').addClass('form-control form-control-sm');
+			$('.dataTables_paginate ').addClass('text-center mt-3 ms-auto');
+		}
+	});
+	$('#mandatesTable thead tr:eq(1) th').each(function (i) {
+		$('input', this).on('keyup change', function () {
+			table.column(i).search(this.value).draw();
+		});
+	});
+	</script>
+</main>
+</body>
+</html>

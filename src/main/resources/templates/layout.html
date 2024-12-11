@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle}">Mandaty</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+</head>
+
+<body>
+<!-- Pasek nawigacyjny -->
+<header th:insert="~{fragments/menu :: menu}"></header>
+
+<!-- Powiadomienie o wyniku operacji -->
+<div id="alert-box" class="fixed-bottom alert alert-info d-none mx-4" role="alert"></div>
+
+<!-- Zmienna treść strony -->
+<main class="container mt-4" layout:fragment="content">
+    <h1>Błąd wczytywania strony</h1>
+</main>
+
+<script>
+	function showAlert(message, type) {
+	    const alertBox = document.getElementById("alert-box");
+	    alertBox.classList.replace(alertBox.classList[2], `alert-${type}`);
+	    alertBox.textContent = message;
+	    alertBox.classList.remove("d-none");
+	    setTimeout(() => alertBox.classList.add("d-none"), 10000);
+	}
+</script>
+</body>
+</html>
