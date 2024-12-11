@@ -84,7 +84,7 @@
 		            <i class="fas fa-paperclip"></i> Pobierz
 		        </a>
 		        <a class="btn btn-secondary" onclick="previewFile()">
-		            <i class="fas fa-paperclip"></i> Debug
+		            <i class="fas fa-paperclip"></i> Podgląd
 		        </a>
    		        <a class="btn btn-danger" onclick="removeFile()">
 		            <i class="fas fa-trash"></i></i> Skasuj
@@ -134,8 +134,8 @@
 
       
 
-        <button type="submit" class="btn btn-primary">Zapisz</button>
-        <a th:href="@{/}" class="btn btn-secondary">Anuluj</a>
+        <button type="submit" class="btn btn-dark">Zapisz</button>
+        <a th:href="@{/}" class="btn btn-danger">Anuluj</a>
     </form>
 	<script>
 		document.getElementById("mandateForm").onsubmit = async (e) => {
