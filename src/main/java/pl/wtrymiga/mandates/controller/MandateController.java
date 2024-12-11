@@ -64,6 +64,8 @@ public class MandateController {
 	@ResponseBody
 	public Message saveMandate(@ModelAttribute Mandate mandate,
 			@RequestParam(required = false, defaultValue = "false") boolean force) {
+		if (mandateService.findById(mandate.getId()).getPaid())
+			return new Message("Nie można edytować opłaconego mandatu!", MessageType.warning);
 		if (force)
 			mandateService.update(mandate);
 		else
@@ -81,8 +83,10 @@ public class MandateController {
 	@DeleteMapping("/api/delete/mandate")
 	@ResponseBody
 	public Message deleteMandate(@RequestParam Long id) {
+		if (mandateService.findById(id).getPaid())
+			return new Message("Nie można skasować opłaconego mandatu!", MessageType.warning);
 		mandateService.deleteById(id);
-		return new Message("Skasowano wpis!", MessageType.warning);
+		return new Message("Skasowano wpis!", MessageType.success);
 	}
 
 	@GetMapping("/api/get/companies")
