@@ -56,8 +56,8 @@
 			<td th:text="${mandate.reason.name() == 'OTHER' ? mandate.customReason : mandate.reason.getName()}">---</td>
 			<td th:text="${mandate.violationDate}">---</td>
 			<td th:text="${mandate.amount} + ' ' + ${mandate.currency}">---</td>
-			<td th:text="${mandate.paymentDeadline}">---</td>
 			<td th:text="${mandate.administrativeFee} + ' ' + ${mandate.administrativeFeeCurrency}">---</td>
+			<td th:text="${mandate.paymentDeadline}">---</td>
 			<td>
 				<a th:if="${mandate.attachment != null}" 
 				   th:href="@{/attachment(id=${mandate.id})}" 
