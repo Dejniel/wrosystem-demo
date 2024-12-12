@@ -1,165 +1,165 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout}">
 <body>
 <main layout:fragment="content">
 	<form id="mandateForm" th:object="${mandate}" method="post" th:action="@{/api/set/mandate}" novalidate>
 		<input type="hidden" name="force" th:value="${forceUpdate}" />
 		<input type="hidden" th:field="*{id}" />
 		
-        <div class="mb-3">
-            <label for="signature" class="form-label">Sygnatura</label>
-            <input type="text" class="form-control" id="signature" th:field="*{signature}" required>
-        </div>
+		<div class="mb-3">
+			<label for="signature" class="form-label">Sygnatura</label>
+			<input type="text" class="form-control" id="signature" th:field="*{signature}" required>
+		</div>
 
-	    <!-- Wybór typu pracownika -->
-	    <div class="mb-3">
-	        <label>Typ pracownika</label>
-	        <select id="employeeType" class="form-select">
-	            <option value="PHYSICAL" th:selected="${mandate.employee.company != null}">Fizyczny</option>
-	            <option value="OFFICE" th:selected="${mandate.employee.company == null}">Biurowy</option>
-	        </select>
-	    
+		<!-- Wybór typu pracownika -->
+		<div class="mb-3">
+			<label>Typ pracownika</label>
+			<select id="employeeType" class="form-select">
+				<option value="PHYSICAL" th:selected="${mandate.employee.company != null}">Fizyczny</option>
+				<option value="OFFICE" th:selected="${mandate.employee.company == null}">Biurowy</option>
+			</select>
+		
 	
-		    <!-- Pracownik Fizyczny -->
-		    <div id="physical-fields" class="d-none">
-		        <label>Firma</label>
-		        <select th:field="*{employee.company.id}" th:data-selected="*{employee.company.id}" id="company" class="form-select">
-		            <option value="">Wybierz firmę...</option>
-		        </select>
+			<!-- Pracownik Fizyczny -->
+			<div id="physical-fields" class="d-none">
+				<label>Firma</label>
+				<select th:field="*{employee.company.id}" th:data-selected="*{employee.company.id}" id="company" class="form-select">
+					<option value="">Wybierz firmę...</option>
+				</select>
 		
-		        <label>Pracownik</label>
-		        <select th:field="*{employee.id}" th:data-selected="*{employee.id}" id="employee" class="form-select">
-		            <option value="">Wybierz pracownika...</option>
-		        </select>
-		    </div>
+				<label>Pracownik</label>
+				<select th:field="*{employee.id}" th:data-selected="*{employee.id}" id="employee" class="form-select">
+					<option value="">Wybierz pracownika...</option>
+				</select>
+			</div>
 		
-		    <!-- Pracownik Biurowy -->
-		    <div id="office-fields" class="d-none">
-		        <label>Imię</label>
-		        <input th:field="*{employee.firstName}" class="form-control" >
+			<!-- Pracownik Biurowy -->
+			<div id="office-fields" class="d-none">
+				<label>Imię</label>
+				<input th:field="*{employee.firstName}" class="form-control" >
 		
-		        <label>Nazwisko</label>
-		        <input th:field="*{employee.lastName}" class="form-control" >
+				<label>Nazwisko</label>
+				<input th:field="*{employee.lastName}" class="form-control" >
 		
-		        <label>Telefon</label>
-		        <input th:field="*{employee.phoneNumber}" class="form-control" >
-		    </div>
-	    
-	    </div>
-		<div class="mb-3">
-		    <label class="form-label">Wykroczenie</label>
-		    <select id="reason" th:field="*{reason}" class="form-select" required>
-		        <option value="" disabled selected>Wybierz wykroczenie</option>
-		        <option th:each="reason : ${T(pl.wtrymiga.mandates.model.ViolationReason).values()}" 
-		                th:value="${reason}" 
-		                th:text="${reason.getName()}">
-		        </option>
-		    </select>
+				<label>Telefon</label>
+				<input th:field="*{employee.phoneNumber}" class="form-control" >
+			</div>
+		
 		</div>
-	    <!-- Pracownik Fizyczny -->
-	    <div id="other-reason" class="d-none">
-	        <label>Opis wykroczenia</label>
-	        <input th:field="*{customReason}" class="form-control">
-	    </div>
-        <div class="mb-3">
-            <label class="form-label">Data wykroczenia</label>
-            <input type="date" class="form-control" th:field="*{violationDate}" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Termin płatności</label>
-            <input type="date" class="form-control" th:field="*{paymentDeadline}" required>
-        </div>
-        
 		<div class="mb-3">
-		    <label class="form-label">Załącznik</label>
+			<label class="form-label">Wykroczenie</label>
+			<select id="reason" th:field="*{reason}" class="form-select" required>
+				<option value="" disabled selected>Wybierz wykroczenie</option>
+				<option th:each="reason : ${T(pl.wtrymiga.mandates.model.ViolationReason).values()}" 
+						th:value="${reason}" 
+						th:text="${reason.getName()}">
+				</option>
+			</select>
+		</div>
+		<!-- Pracownik Fizyczny -->
+		<div id="other-reason" class="d-none">
+			<label>Opis wykroczenia</label>
+			<input th:field="*{customReason}" class="form-control">
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Data wykroczenia</label>
+			<input type="date" class="form-control" th:field="*{violationDate}" required>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Termin płatności</label>
+			<input type="date" class="form-control" th:field="*{paymentDeadline}" required>
+		</div>
 		
-		    <input type="hidden" th:field="*{attachment}" th:value="*{attachment}"/>
-		    <input id="fileUpload" type="file" class="form-control" accept=".pdf">
+		<div class="mb-3">
+			<label class="form-label">Załącznik</label>
+		
+			<input type="hidden" th:field="*{attachment}" th:value="*{attachment}"/>
+			<input id="fileUpload" type="file" class="form-control" accept=".pdf">
 			
-		    <div id="fileMenu" class="mt-2 d-none">
-		        <a  class="btn btn-secondary" onclick="downloadFile()">
-		            <i class="fas fa-paperclip"></i> Pobierz
-		        </a>
-		        <a class="btn btn-secondary" onclick="previewFile()">
-		            <i class="fas fa-paperclip"></i> Podgląd
-		        </a>
-   		        <a class="btn btn-danger" onclick="removeFile()">
-		            <i class="fas fa-trash"></i></i> Skasuj
-		        </a>
-		    </div>
+			<div id="fileMenu" class="mt-2 d-none">
+				<a  class="btn btn-secondary" onclick="downloadFile()">
+					<i class="fas fa-paperclip"></i> Pobierz
+				</a>
+				<a class="btn btn-secondary" onclick="previewFile()">
+					<i class="fas fa-paperclip"></i> Podgląd
+				</a>
+   				<a class="btn btn-danger" onclick="removeFile()">
+					<i class="fas fa-trash"></i></i> Skasuj
+				</a>
+			</div>
 		</div>
 
 
-	    <div class="mb-3 row align-items-center">
-	        <label for="amount" class="form-label col-sm-2">Kwota Mandatu</label>
-	        
-	        <!-- Pole Kwoty -->
-	        <div class="col-sm-4">
-	            <input type="number" th:field="*{amount}" class="form-control" min="0" step="0.01" required>
-	        </div>
-	        
-	        <!-- Wybór Waluty -->
-	        <div class="col-sm-2">
-	            <select th:field="*{currency}" class="form-select" required>
-	                <option th:each="currency : ${T(pl.wtrymiga.mandates.model.Currency).values()}" 
-	                        th:value="${currency}" 
-	                        th:text="${currency}">
-	                </option>
-	            </select>
-	        </div>
-	    </div>
+		<div class="mb-3 row align-items-center">
+			<label for="amount" class="form-label col-sm-2">Kwota Mandatu</label>
+			
+			<!-- Pole Kwoty -->
+			<div class="col-sm-4">
+				<input type="number" th:field="*{amount}" class="form-control" min="0" step="0.01" required>
+			</div>
+			
+			<!-- Wybór Waluty -->
+			<div class="col-sm-2">
+				<select th:field="*{currency}" class="form-select" required>
+					<option th:each="currency : ${T(pl.wtrymiga.mandates.model.Currency).values()}" 
+							th:value="${currency}" 
+							th:text="${currency}">
+					</option>
+				</select>
+			</div>
+		</div>
 
-	    <div class="mb-3 row align-items-center">
-	        <label for="amount" class="form-label col-sm-2">Kwota opłaty administracyjnej</label>
-	        
-	        <!-- Pole Kwoty -->
-	        <div class="col-sm-4">
-	            <input type="number" th:field="*{administrativeFee}" class="form-control" min="0" step="0.01" required>
-	        </div>
-	        
-	        <!-- Wybór Waluty -->
-	        <div class="col-sm-2">
-	            <select th:field="*{administrativeFeeCurrency}" class="form-select" required>
-	                <option th:each="currency : ${T(pl.wtrymiga.mandates.model.Currency).values()}" 
-	                        th:value="${currency}" 
-	                        th:text="${currency}">
-	                </option>
-	            </select>
-	        </div>
-	    </div>
+		<div class="mb-3 row align-items-center">
+			<label for="amount" class="form-label col-sm-2">Kwota opłaty administracyjnej</label>
+			
+			<!-- Pole Kwoty -->
+			<div class="col-sm-4">
+				<input type="number" th:field="*{administrativeFee}" class="form-control" min="0" step="0.01" required>
+			</div>
+			
+			<!-- Wybór Waluty -->
+			<div class="col-sm-2">
+				<select th:field="*{administrativeFeeCurrency}" class="form-select" required>
+					<option th:each="currency : ${T(pl.wtrymiga.mandates.model.Currency).values()}" 
+							th:value="${currency}" 
+							th:text="${currency}">
+					</option>
+				</select>
+			</div>
+		</div>
 
 
-      
+	  
 
-        <button type="submit" class="btn btn-dark">Zapisz</button>
-        <a th:href="@{/}" class="btn btn-danger">Anuluj</a>
-    </form>
+		<button type="submit" class="btn btn-dark">Zapisz</button>
+		<a th:href="@{/}" class="btn btn-danger">Anuluj</a>
+	</form>
 	<script>
 		document.getElementById("mandateForm").onsubmit = async (e) => {
 			e.preventDefault();
-		    if (!e.target.checkValidity()) {
-		        e.stopPropagation();
-		        e.target.classList.add("was-validated"); 
-		        return;
-		    }
-		    const formData = new FormData(e.target);
-		    try {
-		        const res = await fetch(e.target.action, {
-		            method: "POST",
-		            body: formData
-		        });
-		        const { message, type } = await res.json();
-		        showAlert(message, type);
-		        if (res.ok && !formData.get("force")) {
-		        	e.target.reset(); 
-		        	e.target.classList.remove("was-validated"); 
-		        }
-		    } catch {
-		        showAlert("Błąd sieci. Spróbuj ponownie.", "danger");
-		    }
+			if (!e.target.checkValidity()) {
+				e.stopPropagation();
+				e.target.classList.add("was-validated"); 
+				return;
+			}
+			const formData = new FormData(e.target);
+			try {
+				const res = await fetch(e.target.action, {
+					method: "POST",
+					body: formData
+				});
+				const { message, type } = await res.json();
+				showAlert(message, type);
+				if (res.ok && !formData.get("force")) {
+					e.target.reset(); 
+					e.target.classList.remove("was-validated"); 
+				}
+			} catch {
+				showAlert("Błąd sieci. Spróbuj ponownie.", "danger");
+			}
 		};
 	
 		const employeeType = document.getElementById("employeeType");
@@ -171,70 +171,70 @@
 		reasonSelect.onchange();
 		
 		const fetchOptions = async (url, select, defaultText, mapFn) => {
-		    const data = await fetch(url).then(res => res.json());
-		    select.innerHTML = `<option value="">${defaultText}</option>` + data.map(mapFn).join('');
+			const data = await fetch(url).then(res => res.json());
+			select.innerHTML = `<option value="">${defaultText}</option>` + data.map(mapFn).join('');
 		};
 	
 		employeeType.onchange =  async() => {
 			document.getElementById("physical-fields").classList.toggle("d-none", employeeType.value !== "PHYSICAL");
 			document.getElementById("office-fields").classList.toggle("d-none", employeeType.value !== "OFFICE");
-		    document.querySelectorAll("#physical-fields input").forEach(input => {
-    	    	input.required = employeeType.value === "PHYSICAL";  
-	    	});
-		    document.querySelectorAll("#office-fields input").forEach(input => {
-    	    	input.required = employeeType.value === "OFFICE";  
-	    	});
-		    if (employeeType.value === "PHYSICAL")
-		        await fetchOptions('/api/get/companies', companySelect, "Wybierz firmę...", c => `<option value="${c.id}">${c.name}</option>`);
-		    if(employeeType.value === "OFFICE")
-		    	companySelect.value = '';
+			document.querySelectorAll("#physical-fields input").forEach(input => {
+				input.required = employeeType.value === "PHYSICAL";  
+			});
+			document.querySelectorAll("#office-fields input").forEach(input => {
+				input.required = employeeType.value === "OFFICE";  
+			});
+			if (employeeType.value === "PHYSICAL")
+				await fetchOptions('/api/get/companies', companySelect, "Wybierz firmę...", c => `<option value="${c.id}">${c.name}</option>`);
+			if(employeeType.value === "OFFICE")
+				companySelect.value = '';
 		};		
 		companySelect.onchange = () => fetchOptions(
-		    `/api/get/employees?companyId=${companySelect.value}`, 
-		    employeeSelect, 
-		    "Wybierz pracownika...", 
-		    e => `<option value="${e.id}">${e.firstName} ${e.lastName}</option>`
+			`/api/get/employees?companyId=${companySelect.value}`, 
+			employeeSelect, 
+			"Wybierz pracownika...", 
+			e => `<option value="${e.id}">${e.firstName} ${e.lastName}</option>`
 		);
 
 
 		(async () => {
-		    await employeeType.onchange();
-		    if(companySelect.dataset.selected){
-			    companySelect.value = companySelect.dataset.selected;
-			    await companySelect.onchange();
-			    employeeSelect.value = employeeSelect.dataset.selected || "";
-		    }
+			await employeeType.onchange();
+			if(companySelect.dataset.selected){
+				companySelect.value = companySelect.dataset.selected;
+				await companySelect.onchange();
+				employeeSelect.value = employeeSelect.dataset.selected || "";
+			}
 		})();
 		
 		
 
-	    const fileToUrl = () => URL.createObjectURL(new Blob([new Uint8Array(document.getElementById('attachment').value.split(',').map(Number).map(n => (n + 256) % 256))], { type: 'application/pdf' }));
-	    document.getElementById("fileUpload").addEventListener("change", async e => {
-	        if (e.target.files[0]) {
-	        	document.getElementById("attachment").value = Array.from(new Uint8Array(await e.target.files[0].arrayBuffer())).map(b => b > 127 ? b - 256 : b).join(',');
-	        	document.getElementById('fileMenu').classList.remove('d-none');
-	        }
-	    });
-	    const previewFile = () => {
-	    	window.open(fileToUrl(), '_blank');
-	    	console.log(fileToUrl());
-	    };
-	    const downloadFile = () => {
-	        const link = document.createElement('a');
-	        link.href = fileToUrl();
-	        link.download = document.getElementById("signature").value + "_attachment.pdf";
-	        link.click();
-	        URL.revokeObjectURL(link);
-	    };
-	    const removeFile = () => { 
-	    	document.getElementById('attachment').value = ''; 
-	    	document.getElementById('fileMenu').classList.add('d-none');
-	    };
-	    if(document.getElementById('attachment').value){
-	    	document.getElementById("fileUpload").dataset.fakeFile = "attachment.pdf";
-	    	document.getElementById('fileMenu').classList.remove('d-none');
-	    }
-	    
+		const fileToUrl = () => URL.createObjectURL(new Blob([new Uint8Array(document.getElementById('attachment').value.split(',').map(Number).map(n => (n + 256) % 256))], { type: 'application/pdf' }));
+		document.getElementById("fileUpload").addEventListener("change", async e => {
+			if (e.target.files[0]) {
+				document.getElementById("attachment").value = Array.from(new Uint8Array(await e.target.files[0].arrayBuffer())).map(b => b > 127 ? b - 256 : b).join(',');
+				document.getElementById('fileMenu').classList.remove('d-none');
+			}
+		});
+		const previewFile = () => {
+			window.open(fileToUrl(), '_blank');
+			console.log(fileToUrl());
+		};
+		const downloadFile = () => {
+			const link = document.createElement('a');
+			link.href = fileToUrl();
+			link.download = document.getElementById("signature").value + "_attachment.pdf";
+			link.click();
+			URL.revokeObjectURL(link);
+		};
+		const removeFile = () => { 
+			document.getElementById('attachment').value = ''; 
+			document.getElementById('fileMenu').classList.add('d-none');
+		};
+		if(document.getElementById('attachment').value){
+			document.getElementById("fileUpload").dataset.fakeFile = "attachment.pdf";
+			document.getElementById('fileMenu').classList.remove('d-none');
+		}
+		
 	</script>
 </main>
 
