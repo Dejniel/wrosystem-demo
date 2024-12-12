@@ -69,6 +69,7 @@ public class DataLoader implements CommandLineRunner {
 			final var employee = employees.get(ThreadLocalRandom.current().nextInt(employees.size()));
 			final var mandate = new Mandate(Generator.signature(), Generator.datePast(), Generator.violation(),
 					Generator.money(), Generator.currency(), Generator.dateFuture(), employee);
+			mandate.setPaid(ThreadLocalRandom.current().nextDouble() > .6);
 			if (mandate.getReason() == ViolationReason.OTHER)
 				mandate.setCustomReason("To zła kobieta była");
 			mandateRepository.save(mandate);
