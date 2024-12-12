@@ -23,7 +23,7 @@
 	    
 	
 		    <!-- Pracownik Fizyczny -->
-		    <div id="physical-fields" style="display: none;">
+		    <div id="physical-fields" class="d-none">
 		        <label>Firma</label>
 		        <select th:field="*{employee.company.id}" th:data-selected="*{employee.company.id}" id="company" class="form-select">
 		            <option value="">Wybierz firmę...</option>
@@ -36,7 +36,7 @@
 		    </div>
 		
 		    <!-- Pracownik Biurowy -->
-		    <div id="office-fields" style="display: none;">
+		    <div id="office-fields" class="d-none">
 		        <label>Imię</label>
 		        <input th:field="*{employee.firstName}" class="form-control" >
 		
@@ -59,7 +59,7 @@
 		    </select>
 		</div>
 	    <!-- Pracownik Fizyczny -->
-	    <div id="other-reason" style="display: none;">
+	    <div id="other-reason" class="d-none">
 	        <label>Opis wykroczenia</label>
 	        <input th:field="*{customReason}" class="form-control">
 	    </div>
@@ -79,7 +79,7 @@
 		    <input type="hidden" th:field="*{attachment}" th:value="*{attachment}"/>
 		    <input id="fileUpload" type="file" class="form-control" accept=".pdf">
 			
-		    <div id="fileMenu" class="mt-2" style="display: none;">
+		    <div id="fileMenu" class="mt-2" class="d-none">
 		        <a  class="btn btn-secondary" onclick="downloadFile()">
 		            <i class="fas fa-paperclip"></i> Pobierz
 		        </a>
@@ -166,7 +166,8 @@
 		const companySelect = document.getElementById("company");
 		const employeeSelect = document.getElementById("employee");
 		const reasonSelect = document.getElementById("reason");
-		reasonSelect.onchange = () => document.getElementById("other-reason").style.display = reasonSelect.value === "OTHER" ? "block" : "none";
+		
+		reasonSelect.onchange = () => document.getElementById("other-reason").classList.toggle("d-none", reasonSelect.value !== "OTHER");
 		reasonSelect.onchange();
 		
 		const fetchOptions = async (url, select, defaultText, mapFn) => {
@@ -175,10 +176,11 @@
 		};
 	
 		employeeType.onchange =  async() => {
-		    document.getElementById("physical-fields").style.display = employeeType.value === "PHYSICAL" ? "block" : "none";
-		    document.getElementById("office-fields").style.display = employeeType.value === "OFFICE" ? "block" : "none";
-		    companySelect.required = employeeType.value === "PHYSICAL";
-		    employeeSelect.required = employeeType.value === "PHYSICAL";
+			document.getElementById("physical-fields").classList.toggle("d-none", employeeType.value !== "PHYSICAL");
+			document.getElementById("office-fields").classList.toggle("d-none", employeeType.value !== "OFFICE");
+		    document.querySelectorAll("#physical-fields input").forEach(input => {
+    	    	input.required = employeeType.value === "PHYSICAL";  
+	    	});
 		    document.querySelectorAll("#office-fields input").forEach(input => {
     	    	input.required = employeeType.value === "OFFICE";  
 	    	});
@@ -210,7 +212,7 @@
 	    document.getElementById("fileUpload").addEventListener("change", async e => {
 	        if (e.target.files[0]) {
 	        	document.getElementById("attachment").value = Array.from(new Uint8Array(await e.target.files[0].arrayBuffer())).map(b => b > 127 ? b - 256 : b).join(',');
-	        	document.getElementById('fileMenu').style.display = 'block';
+	        	document.getElementById('fileMenu').classList.remove('d-none');
 	        }
 	    });
 	    const previewFile = () => {
@@ -226,11 +228,11 @@
 	    };
 	    const removeFile = () => { 
 	    	document.getElementById('attachment').value = ''; 
-	    	document.getElementById('fileMenu').style.display = 'none';
+	    	document.getElementById('fileMenu').classList.add('d-none');
 	    };
 	    if(document.getElementById('attachment').value){
 	    	document.getElementById("fileUpload").dataset.fakeFile = "attachment.pdf";
-	    	document.getElementById('fileMenu').style.display = 'block';
+	    	document.getElementById('fileMenu').classList.remove('d-none');
 	    }
 	    
 	</script>
