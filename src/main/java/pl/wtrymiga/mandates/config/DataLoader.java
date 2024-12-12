@@ -1,9 +1,10 @@
 package pl.wtrymiga.mandates.config;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -26,60 +27,11 @@ public class DataLoader implements CommandLineRunner {
 	private final EmployeeRepository employeeRepository;
 	private final MandateRepository mandateRepository;
 
-	private final String[] firstNames = { "Jan", "Anna", "Piotr", "Katarzyna", "Tomasz", "Monika", "Michał", "Ewa",
-			"Paweł", "Agnieszka" };
-	private final String[] lastNames = { "Kowalski", "Nowak", "Wiśniewski", "Wójcik", "Kowalczyk", "Kamiński",
-			"Lewandowski", "Zieliński", "Szymański", "Dąbrowski" };
-
 	public DataLoader(CompanyRepository companyRepository, EmployeeRepository employeeRepository,
 			MandateRepository mandateRepository) {
 		this.companyRepository = companyRepository;
 		this.employeeRepository = employeeRepository;
 		this.mandateRepository = mandateRepository;
-	}
-
-	private void loadCompanies() {
-		companyRepository.saveAll(List.of(new Company("1234567890", "EcoPro"), new Company("9876543210", "NetX"),
-				new Company("5678901234", "TechLab")));
-	}
-
-	private void loadEmployees() {
-		final var companies = companyRepository.findAll();
-		final var random = new Random();
-
-		for (final Company company : companies)
-			for (var i = 0; i < 10; i++) {
-				final var employee = new Employee(firstNames[random.nextInt(firstNames.length)],
-						lastNames[random.nextInt(lastNames.length)], "555-000-" + (random.nextInt(900) + 100));
-				employee.setCompany(company);
-				employee.setActive(random.nextBoolean());
-				employeeRepository.save(employee);
-			}
-	}
-
-	private void loadUnassignedEmployees() {
-		final var random = new Random();
-		for (var i = 0; i < 5; i++)
-			employeeRepository.save(new Employee(firstNames[random.nextInt(firstNames.length)],
-					lastNames[random.nextInt(lastNames.length)], "555-999-" + (random.nextInt(900) + 100)));
-	}
-
-	private void loadMandates() {
-		final var employees = employeeRepository.findAll();
-		final var random = new Random();
-
-		for (var i = 0; i < 15; i++) {
-			final var employee = employees.get(random.nextInt(employees.size()));
-
-			final var mandate = new Mandate("MDT" + i + random.nextInt(1000),
-					LocalDate.now().minusDays(random.nextInt(100)),
-					ViolationReason.values()[random.nextInt(ViolationReason.values().length)],
-					BigDecimal.valueOf(random.nextInt(1000) + 100), random.nextBoolean() ? Currency.PLN : Currency.EUR,
-					LocalDate.now().plusDays(random.nextInt(60)), employee);
-			if (mandate.getReason() == ViolationReason.OTHER)
-				mandate.setCustomReason("To zła kobieta była");
-			mandateRepository.save(mandate);
-		}
 	}
 
 	@Override
@@ -88,5 +40,85 @@ public class DataLoader implements CommandLineRunner {
 		loadEmployees();
 		loadUnassignedEmployees();
 		loadMandates();
+	}
+
+	private void loadCompanies() {
+		companyRepository.saveAll(List.of(new Company(Generator.nip(), "EcoPro"), new Company(Generator.nip(), "NetX"),
+				new Company(Generator.nip(), "TechLab")));
+	}
+
+	private void loadEmployees() {
+		for (final Company company : companyRepository.findAll())
+			for (int i = 0; i < 10; ++i) {
+				final var employee = new Employee(Generator.name(), Generator.surname(), Generator.phone());
+				employee.setCompany(company);
+				employee.setActive(ThreadLocalRandom.current().nextBoolean());
+				employeeRepository.save(employee);
+			}
+	}
+
+	private void loadUnassignedEmployees() {
+		for (int i = 0; i < 5; ++i)
+			employeeRepository.save(new Employee(Generator.name(), Generator.surname(), Generator.phone()));
+	}
+
+	private void loadMandates() {
+		final var employees = employeeRepository.findAll();
+
+		for (int i = 0; i < 15; ++i) {
+			final var employee = employees.get(ThreadLocalRandom.current().nextInt(employees.size()));
+			final var mandate = new Mandate(Generator.signature(), Generator.datePast(), Generator.violation(),
+					Generator.money(), Generator.currency(), Generator.dateFuture(), employee);
+			if (mandate.getReason() == ViolationReason.OTHER)
+				mandate.setCustomReason("To zła kobieta była");
+			mandateRepository.save(mandate);
+		}
+	}
+
+	private static class Generator {
+		private final static String[] firstNames = { "Jan", "Anna", "Piotr", "Katarzyna", "Tomasz", "Monika", "Michał",
+				"Ewa", "Paweł", "Agnieszka" };
+		private final static String[] lastNames = { "Kowalski", "Nowak", "Wiśniewski", "Wójcik", "Kowalczyk",
+				"Kamiński", "Lewandowski", "Zieliński", "Szymański", "Dąbrowski" };
+
+		public static final BigDecimal money() {
+			return new BigDecimal(ThreadLocalRandom.current().nextDouble() * 1000).setScale(2, RoundingMode.HALF_UP);
+		}
+
+		public static final Currency currency() {
+			return Currency.values()[ThreadLocalRandom.current().nextInt(Currency.values().length)];
+		}
+
+		public static final ViolationReason violation() {
+			return ViolationReason.values()[ThreadLocalRandom.current().nextInt(ViolationReason.values().length)];
+		}
+
+		public static final LocalDate datePast() {
+			return LocalDate.now().minusDays(ThreadLocalRandom.current().nextInt(100));
+		}
+
+		public static final LocalDate dateFuture() {
+			return LocalDate.now().plusDays(ThreadLocalRandom.current().nextInt(100));
+		}
+
+		public static final String signature() {
+			return "MDT" + (ThreadLocalRandom.current().nextInt(900000) + 100000);
+		}
+
+		public static final String name() {
+			return firstNames[ThreadLocalRandom.current().nextInt(firstNames.length)];
+		}
+
+		public static final String surname() {
+			return lastNames[ThreadLocalRandom.current().nextInt(lastNames.length)];
+		}
+
+		public static final String phone() {
+			return "" + (ThreadLocalRandom.current().nextInt(900000000) + 100000000);
+		}
+
+		public static final String nip() {
+			return "" + (ThreadLocalRandom.current().nextLong(9000000000L) + 1000000000);
+		}
 	}
 }
