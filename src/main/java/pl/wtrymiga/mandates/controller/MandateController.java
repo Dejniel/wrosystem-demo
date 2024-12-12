@@ -64,11 +64,11 @@ public class MandateController {
 	@ResponseBody
 	public Message saveMandate(@ModelAttribute Mandate mandate,
 			@RequestParam(required = false, defaultValue = "false") boolean force) {
-		if (mandateService.findById(mandate.getId()).getPaid())
-			return new Message("Nie można edytować opłaconego mandatu!", MessageType.warning);
-		if (force)
+		if (force) {
+			if (mandateService.findById(mandate.getId()).getPaid())
+				return new Message("Nie można edytować opłaconego mandatu!", MessageType.warning);
 			mandateService.update(mandate);
-		else
+		} else
 			mandateService.add(mandate);
 		return new Message("Mandat zapisany pomyślnie!", MessageType.success);
 	}
