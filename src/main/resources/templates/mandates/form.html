@@ -83,13 +83,13 @@
 			<input id="fileUpload" type="file" class="form-control" accept=".pdf">
 			
 			<div id="fileMenu" class="mt-2 d-none">
-				<a  class="btn btn-secondary" onclick="downloadFile()">
+				<a id="fileDownload" class="btn btn-secondary">
 					<i class="fas fa-paperclip"></i> Pobierz
 				</a>
-				<a class="btn btn-secondary" onclick="previewFile()">
+				<a id="filePreview" class="btn btn-secondary">
 					<i class="fas fa-paperclip"></i> Podgląd
 				</a>
-   				<a class="btn btn-danger" onclick="removeFile()">
+   				<a id="fileDelete" class="btn btn-danger">
 					<i class="fas fa-trash"></i></i> Skasuj
 				</a>
 			</div>
@@ -133,10 +133,6 @@
 				</select>
 			</div>
 		</div>
-
-
-	  
-
 		<button type="submit" class="btn btn-dark">Zapisz</button>
 		<a th:href="@{/}" class="btn btn-danger">Anuluj</a>
 	</form>
