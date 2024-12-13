@@ -63,7 +63,7 @@
 			<td th:text="${mandate.paymentDeadline}">---</td>
 			<td class="align-middle">
 				<a th:if="${mandate.attachment != null}" 
-				   th:href="@{/attachment(id=${mandate.id})}" 
+				   th:href="@{/api/get/attachment(id=${mandate.id})}" 
 				   class="btn btn-secondary attachment-link text-center" 
 				   download>
 					<i class="fas fa-paperclip" style="pointer-events:auto"></i>
