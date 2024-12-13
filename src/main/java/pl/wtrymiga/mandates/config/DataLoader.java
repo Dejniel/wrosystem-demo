@@ -2,6 +2,7 @@ package pl.wtrymiga.mandates.config;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -70,6 +71,8 @@ public class DataLoader implements CommandLineRunner {
 			final var mandate = new Mandate(Generator.signature(), Generator.datePast(), Generator.violation(),
 					Generator.money(), Generator.currency(), Generator.dateFuture(), employee);
 			mandate.setPaid(ThreadLocalRandom.current().nextDouble() > .6);
+			if (ThreadLocalRandom.current().nextDouble() > .7)
+				mandate.setAttachment(Generator.pdf());
 			if (mandate.getReason() == ViolationReason.OTHER)
 				mandate.setCustomReason("To zła kobieta była");
 			mandateRepository.save(mandate);
@@ -120,6 +123,22 @@ public class DataLoader implements CommandLineRunner {
 
 		public static final String nip() {
 			return "" + (ThreadLocalRandom.current().nextLong(9000000000L) + 1000000000);
+		}
+
+		public static final byte[] pdf() {
+			final String[] texts = { "Kocha", "Lubi", "Szanuje", "Nie Kocha", "Nie lubi", "Nie Szanuje" };
+			final String text = texts[ThreadLocalRandom.current().nextInt(texts.length)];
+
+			final String pdf = "%PDF-1.4\n" + "1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
+					+ "2 0 obj<</Type/Pages/Count 1/Kids[3 0 R]>>endobj\n"
+					+ "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 300 200]/Contents 4 0 R/Resources<</Font<</F1 5 0 R>>>>>>endobj\n"
+					+ "4 0 obj<</Length " + (text.length() + 50) + ">>stream\n" + "BT /F1 24 Tf 100 150 Td (" + text
+					+ ") Tj ET\n" + "endstream\nendobj\n"
+					+ "5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\n" + "xref\n0 6\n"
+					+ "0000000000 65535 f \n" + "0000000010 00000 n \n" + "0000000058 00000 n \n"
+					+ "0000000111 00000 n \n" + "0000000219 00000 n \n" + "0000000320 00000 n \n"
+					+ "trailer<</Size 6/Root 1 0 R>>\n" + "startxref\n373\n" + "%%EOF";
+			return pdf.getBytes(StandardCharsets.UTF_8);
 		}
 	}
 }
