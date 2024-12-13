@@ -69,11 +69,12 @@ document.addEventListener("DOMContentLoaded", function(){
 	
 	// Obsługa załączników
 	const attachmentInput = document.getElementById("attachment");
+	const attachmentVisibleInput = document.getElementById("fileUpload");
 	const fileMenuContainer = document.getElementById('fileMenu');
 	const fileToUrl = () => URL.createObjectURL(new Blob([new Uint8Array(attachmentInput.value.split(',').map(Number).map(n => (n + 256) % 256))], { type: 'application/pdf' }));
 	
 	
-	document.getElementById("fileUpload").addEventListener("change", async e => {
+	attachmentVisibleInput.addEventListener("change", async e => {
 		if (e.target.files[0]) {
 			attachmentInput.value = Array.from(new Uint8Array(await e.target.files[0].arrayBuffer())).map(b => b > 127 ? b - 256 : b).join(',');
 			fileMenuContainer.classList.remove('d-none');
@@ -91,7 +92,8 @@ document.addEventListener("DOMContentLoaded", function(){
 		URL.revokeObjectURL(link);
 	});
 	document.getElementById("fileDelete").addEventListener("click", async () => { 
-		attachmentInput.value = ''; 
+		attachmentInput.value = '';
+		attachmentVisibleInput.value = '';
 		fileMenuContainer.classList.add('d-none');
 	});
 	
