@@ -1,3 +1,6 @@
+# Uwaga! Demo! 
+Projekt jest demem kwalifikacyjnym stworzonym w mniej niż 16h roboczych i nigdy **nie powinien być wykorzystywany**, w tej formie, **na produkcji**
+
 # Uruchamianie Środowiska Developerskiego (Nieprodukcyjnego)
 
 ### **1. Ustawienie Zmiennych Środowiskowych**
